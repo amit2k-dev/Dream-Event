@@ -1,1 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EventPro — Event Management</title>
+  <meta name="description" content="EventPro — Simple single-page frontend for event management. Manage events, showcase services, collect RSVP." />
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <style>
+    /* ---------- Reset & Base ---------- */
+    :root{
+      --bg: #0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#7c3aed;
+      --glass: rgba(255,255,255,0.04);
+      --radius:16px;
+      --maxw:1100px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #071029 0%, #071827 60%), var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:32px 18px;
+      display:flex;
+      justify-content:center;
+      font-size:16px;
+    }
+    .container{width:100%;max-width:var(--maxw);}
+
+    /* ---------- Header ---------- */
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:28px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      text-decoration:none;
+      color:inherit;
+    }
+    .logo{
+      width:48px;height:48px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#06b6d4);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;box-shadow:0 6px 18px rgba(124,58,237,0.16);
+      font-family: ui-rounded, system-ui;
+    }
+    .brand h1{font-size:18px;margin:0}
+    .nav{display:flex;gap:12px;align-items:center}
+    .btn {
+      background:linear-gradient(90deg,var(--accent),#06b6d4);
+      border:0;padding:10px 14px;border-radius:10px;color:white;text-decoration:none;
+      box-shadow:0 8px 24px rgba(12,18,45,0.45);font-weight:600;font-size:14px;
+    }
+    .ghost {background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px}
+
+    /* ---------- Hero ---------- */
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+      margin-bottom:36px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .hero-left h2{margin:0 0 10px 0;font-size:28px}
+    .lead{color:var(--muted);margin-bottom:18px}
+    .cta-row{display:flex;gap:12px;align-items:center}
+    .kpi{display:flex;gap:12px;margin-top:18px}
+    .kpi div{background:var(--glass);padding:10px 12px;border-radius:12px;font-size:14px;color:var(--muted)}
+
+    /* Hero right preview */
+    .preview{
+      border-radius:12px;overflow:hidden;height:100%;
+      display:flex;flex-direction:column;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+    .preview img{width:100%;height:220px;object-fit:cover;display:block}
+    .preview .meta{padding:12px}
+    .preview h3{margin:6px 0 4px 0;font-size:16px}
+    .tag{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,0.03);color:var(--muted)}
+
+    /* ---------- Events Grid ---------- */
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 0}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:16px;
+    }
+    .event{
+      border-radius:12px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;flex-direction:column;
+    }
+    .event img{width:100%;height:160px;object-fit:cover}
+    .event .body{padding:12px;flex:1;display:flex;flex-direction:column}
+    .event h4{margin:0 0 6px 0}
+    .pill{font-size:13px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);display:inline-block;margin-right:8px}
+
+    /* ---------- Services & Contact ---------- */
+    .cols{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:20px}
+    .service{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--glass)}
+    .service .icon{width:46px;height:46px;border-radius:10px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700}
+
+    form label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+    input, textarea, select{
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+      background:transparent;color:inherit;font-size:14px;
+    }
+    .small{font-size:13px;color:var(--muted)}
+    .form-actions{display:flex;gap:10px;align-items:center;margin-top:12px}
+
+    /* ---------- Footer ---------- */
+    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center;padding:18px 0}
+
+    /* ---------- Responsiveness ---------- */
+    @media (max-width:1000px){
+      .hero{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns: repeat(2,1fr)}
+      .cols{grid-template-columns:1fr 320px}
+    }
+    @media (max-width:720px){
+      body{padding:18px}
+      .hero{grid-template-columns:1fr;gap:14px}
+      .preview img{height:180px}
+      .grid{grid-template-columns:1fr}
+      .cols{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start;gap:12px}
+    }
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    a{color:inherit}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <a class="brand" href="#" aria-label="EventPro home">
+        <div class="logo">EP</div>
+        <div>
+          <h1>EventPro</h1>
+          <div class="small muted">Plan • Manage • Celebrate</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a class="ghost" href="#events">Events</a>
+        <a class="ghost" href="#services">Services</a>
+        <a class="btn" href="#contact">Get Started</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="card hero-left">
+        <h2>Make every event unforgettable — fast.</h2>
+        <p class="lead">Create event pages, manage RSVPs & showcase services with a clean single-page frontend. Perfect for meetups, workshops, concerts, and sponsorship pages.</p>
+
+        <div class="cta-row">
+          <a class="btn" href="#contact">Create Event</a>
+          <a class="ghost" href="#events">See Events</a>
+        </div>
+
+        <div class="kpi" aria-hidden="true">
+          <div><strong>40+</strong> Events managed</div>
+          <div><strong>1200+</strong> Attendees</div>
+          <div><strong>4.9</strong> Avg rating</div>
+        </div>
+      </div>
+
+      <aside class="preview card" aria-label="Featured event preview">
+        <img src="https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=0b6d9f3f6a1dcd2d6b5b9ca99f7c6c20" alt="Live event stage">
+        <div class="meta">
+          <span class="tag">Featured</span>
+          <h3>Sunset Music Festival</h3>
+          <div class="muted small">Oct 14, 2025 • Open Air Stage • 6:00 PM</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="events">
+      <div class="section-title">
+        <h2 style="margin:0">Upcoming Events</h2>
+        <div class="small muted">Explore & RSVP</div>
+      </div>
+
+      <div class="grid">
+        <!-- Event 1 -->
+        <article class="event card" aria-labelledby="e1">
+          <img src="https://images.unsplash.com/photo-1520975917164-8d3b0d9e2b86?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2b4e2a6f7d6d3bd5a1e1e2b2f3c4d5e6" alt="Conference image">
+          <div class="body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <h4 id="e1">Tech Leadership Summit</h4>
+              <div class="pill">Free</div>
+            </div>
+            <p class="muted small" style="flex:1">A one-day summit on leadership in software teams, product strategy and growth hacking.</p>
+            <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+              <div class="pill">Nov 30, 2025</div>
+              <a class="btn" href="#contact" style="padding:8px 10px;font-size:14px">RSVP</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Event 2 -->
+        <article class="event card" aria-labelledby="e2">
+          <img src="https://images.unsplash.com/photo-1509099836639-18ba6c7b7f9a?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=8d7b4b3d6a1c9b5a3c5d8e2f9a4b6c7d" alt="Food festival">
+          <div class="body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <h4 id="e2">Street Food Carnival</h4>
+              <div class="pill">Paid</div>
+            </div>
+            <p class="muted small" style="flex:1">Experience the best street cuisines with live music and local artists.</p>
+            <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+              <div class="pill">Dec 12, 2025</div>
+              <a class="btn" href="#contact" style="padding:8px 10px;font-size:14px">Buy Tickets</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Event 3 -->
+        <article class="event card" aria-labelledby="e3">
+          <img src="https://images.unsplash.com/photo-1515165562835-c5c9e3a7aa9e?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=9b6e8d7f5a3c2b1d4e6f7a8b9c0d1e2f" alt="Workshop image">
+          <div class="body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <h4 id="e3">Design Sprint Workshop</h4>
+              <div class="pill">Seats</div>
+            </div>
+            <p class="muted small" style="flex:1">Hands-on design sprint for product teams — ideate, prototype and test in 2 days.</p>
+            <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+              <div class="pill">Jan 10, 2026</div>
+              <a class="btn" href="#contact" style="padding:8px 10px;font-size:14px">Join Waitlist</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SERVICES + CONTACT -->
+    <section style="margin-top:20px" id="services">
+      <div class="section-title">
+        <h2 style="margin:0">Services</h2>
+        <div class="small muted">What we offer</div>
+      </div>
+
+      <div class="cols">
+        <div>
+          <div class="service card" role="article" aria-label="Event planning">
+            <div class="icon">P</div>
+            <div>
+              <strong>Event Planning</strong>
+              <div class="muted small">Full planning from concept to execution — timelines, vendors, and run-sheets.</div>
+            </div>
+          </div>
+
+          <div class="service card" role="article" aria-label="Venue">
+            <div class="icon">V</div>
+            <div>
+              <strong>Venue & Logistics</strong>
+              <div class="muted small">Venue selection, layout, permits & onsite coordination.</div>
+            </div>
+          </div>
+
+          <div class="service card" role="article" aria-label="Marketing">
+            <div class="icon">M</div>
+            <div>
+              <strong>Marketing & Tickets</strong>
+              <div class="muted small">Promotions, ticketing, and sponsorship packages.</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card" id="contact" aria-labelledby="contactTitle">
+          <h3 id="contactTitle">Create / RSVP</h3>
+          <p class="muted small">Fill details and we will get back (this demo form is client-side only).</p>
+
+          <form id="rsvp" onsubmit="return submitForm(event)" aria-label="RSVP and event creation form">
+            <label for="name">Your name</label>
+            <input id="name" required placeholder="Name" />
+
+            <label for="email">Email</label>
+            <input id="email" type="email" required placeholder="your@email.com" />
+
+            <label for="type">I want to</label>
+            <select id="type">
+              <option>RSVP to event</option>
+              <option>Create an event</option>
+              <option>Book services</option>
+            </select>
+
+            <label for="message">Message</label>
+            <textarea id="message" rows="4" placeholder="Tell us briefly..."></textarea>
+
+            <div class="form-actions">
+              <button class="btn" type="submit">Send</button>
+              <button class="ghost" type="button" onclick="resetForm()">Reset</button>
+            </div>
+
+            <div id="formResponse" class="small muted" style="margin-top:10px;display:none"></div>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> EventPro • Built with a single HTML page • Images: Unsplash</div>
+    </footer>
+
+  </div>
+
+  <script>
+    // small helpers: set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // demo client-side form handling
+    function submitForm(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const type = document.getElementById('type').value;
+      const message = document.getElementById('message').value.trim();
+
+      // Small validation
+      if(!name || !email) {
+        showResponse('Please enter name and email.', true);
+        return false;
+      }
+
+      // Build a friendly message (no backend — just demo)
+      const summary = `Thanks ${name}! We've received your "${type}" request. We'll contact you at ${email}.`;
+      showResponse(summary, false);
+
+      // Reset form after short pause
+      setTimeout(()=> document.getElementById('rsvp').reset(), 1000);
+      return false;
+    }
+
+    function showResponse(text, isError){
+      const el = document.getElementById('formResponse');
+      el.style.display = 'block';
+      el.textContent = text;
+      el.style.color = isError ? '#ffb4b4' : '#bfe9d7';
+    }
+    function resetForm(){
+      document.getElementById('rsvp').reset();
+      const el = document.getElementById('formResponse');
+      el.style.display='none';
+    }
+  </script>
+</body>
+</html>
 
